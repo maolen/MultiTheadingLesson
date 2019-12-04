@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace MultiTheadingLesson
@@ -14,13 +15,22 @@ namespace MultiTheadingLesson
             //// Имитация длительной работы.
             //Thread.Sleep(5000);
 
-            var thread = new Thread(ProcessWork);
-            thread.Start();
-
-            ProcessWork();
+            //var thread = new Thread(ProcessWork);
+            ////блокирует вызывающий поток пока не завершит работу
+            // thread.Join();
+            //thread.IsBackground = false;
+            //thread.Priority - никогда не используется
+            //thread.Start();
+            var thread = new Thread(ProcessData);
+            thread.Start(new List<object> 
+            {
+                new {Name = "Bob"},
+                new {Name = "Alice"}
+            });
+            //ProcessWork();
 
             Console.WriteLine($"Поток {currentThread.ManagedThreadId} закончил работу");
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
         static void ProcessWork()
@@ -31,6 +41,15 @@ namespace MultiTheadingLesson
             {
                 Console.WriteLine($"[{currentThread.ManagedThreadId}] - {i}");
                 Thread.Sleep(500);
+            }
+        }
+
+        static void ProcessData(object data)
+        {
+            Thread.Sleep(3000);
+            foreach(var item in data as List<object>)
+            {
+                Console.WriteLine(item);
             }
         }
     }
